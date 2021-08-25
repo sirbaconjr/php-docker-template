@@ -1,0 +1,38 @@
+version: "3.7"
+services:
+  app:
+    container_name: app
+    image: app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        APP_STAGE: dev
+    volumes:
+      - ./src:/app
+      - ./docker/php/config/extensions/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    networks:
+      - bubble
+    ports:
+      - "8000:80"
+
+  mysql:
+    container_name: mysql
+    image: mysql:8.0.26
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+    volumes:
+      - mysql:/data/db
+    networks:
+      - bubble
+    ports:
+      - "4306:3306"
+
+networks:
+  bubble:
+    name: bubble
+    driver: bridge
+
+volumes:
+  mysql:
